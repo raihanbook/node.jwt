@@ -9,6 +9,8 @@ const authRequire = (req, res, next) => {
     jwt.verify(token, 'secret', (err, decodedToken) => {
       if (err) {
         console.log(err.message);
+        console.log(req.path);
+        res.cookie('next', req.path, { httpOnly: true });
         res.redirect('/login');
       } else {
         console.log(decodedToken);
@@ -16,6 +18,8 @@ const authRequire = (req, res, next) => {
       }
     });
   } else {
+    console.log(req.path);
+    res.cookie('next', req.path, { httpOnly: true });
     res.redirect('/login');
   }
 };
