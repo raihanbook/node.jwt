@@ -3,11 +3,11 @@
 <form action="/login">
   <h2>Login</h2>
   <label for="email">Email</label>
-  <input type="text" name="email"  />
-  <div class="email error"></div>
+  <input type="text" name="email" required/>
+  <div class="error" id="email"></div>
   <label for="password">Password</label>
-  <input type="password" name="password"  />
-  <div class="password error"></div>
+  <input type="password" name="password" required/>
+  <div class="error" id="password"></div>
   <button>login</button>
 </form>
 
@@ -15,15 +15,20 @@
 
 <script>
   const form = document.querySelector('form');
-  const emailError = document.querySelector('.email.error');
-  const passwordError = document.querySelector('.password.error');
+  const inputFields = document.getElementsByTagName('input');
+  const errorFields = document.getElementsByClassName('error');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // Reset errors
-    emailError.textContent = '';
-    passwordError.textContent = '';
+    for (let i = 0; i < inputFields.length; i++) {
+      inputFields[i].style.border = '1px solid #ddd';
+    }
+
+    for (let i = 0; i < errorFields.length; i++) {
+      errorFields[i].textContent = '';
+    }
 
     // Get values
     const email = form.email.value;
@@ -36,10 +41,15 @@
         headers: {'Content-Type': 'application/json'}
       });
       const data = await res.json();
-      console.log(data);
       if (data.errors) {
-        emailError.textContent = data.errors.email;
-        passwordError.textContent = data.errors.password;
+        let i = 0;
+        for (err in data.errors) {
+          if (data.errors[err] !== '') {
+            inputFields[i].style.border = '1px solid #ff0099';
+            errorFields[i].textContent = data.errors[err];
+          }
+          i++;
+        }
       }
       if (data.user) {
         if (data.next) {
