@@ -41,6 +41,7 @@
         headers: {'Content-Type': 'application/json'}
       });
       const data = await res.json();
+      console.log(data.errors);
       if (data.errors) {
         let i = 0;
         for (err in data.errors) {
