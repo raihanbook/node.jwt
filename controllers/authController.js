@@ -64,7 +64,6 @@ module.exports.signup_post = async (req, res) => {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
   }
-
 }
 
 module.exports.login_post = async (req, res) => {

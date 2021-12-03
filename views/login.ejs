@@ -1,13 +1,17 @@
 <%- include('partials/header'); -%>
 
+<% if (flash) { %>
+  <div class="flash" id="flash" style="margin-bottom: 1em;">Please login to access the page</div>
+<% } %>
+
+<div class="error" id="error" style="margin-bottom: 1em; display: none;">Email or Password is incorrect</div>
+
 <form action="/login">
   <h2>Login</h2>
   <label for="email">Email</label>
   <input type="text" name="email" required/>
-  <div class="error" id="email"></div>
   <label for="password">Password</label>
   <input type="password" name="password" required/>
-  <div class="error" id="password"></div>
   <button>login</button>
 </form>
 
@@ -16,7 +20,8 @@
 <script>
   const form = document.querySelector('form');
   const inputFields = document.getElementsByTagName('input');
-  const errorFields = document.getElementsByClassName('error');
+  const errorField = document.getElementById('error');
+  const flashField = document.getElementById('flash');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -26,9 +31,7 @@
       inputFields[i].style.border = '1px solid #ddd';
     }
 
-    for (let i = 0; i < errorFields.length; i++) {
-      errorFields[i].textContent = '';
-    }
+    errorField.style.display = 'none';
 
     // Get values
     const email = form.email.value;
@@ -43,13 +46,12 @@
       const data = await res.json();
       console.log(data.errors);
       if (data.errors) {
-        let i = 0;
-        for (err in data.errors) {
-          if (data.errors[err] !== '') {
-            inputFields[i].style.border = '1px solid #ff0099';
-            errorFields[i].textContent = data.errors[err];
-          }
-          i++;
+        for (let i = 0; i < inputFields.length; i++) {
+          inputFields[i].style.border = '1px solid #ff0099';
+        }
+        errorField.style.display = 'block';
+        if (flash) {
+          flashField.style.display = 'none';
         }
       }
       if (data.user) {
